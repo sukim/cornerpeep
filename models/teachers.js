@@ -13,6 +13,11 @@ var teacherSchema = new Schema({
     votes: Number,
     favs:  Number
   }
+  // trphoto : String,
+  // source : {
+  //   teachername : String,
+  //   url : String
+  // },
 
 });
 

@@ -13,6 +13,8 @@ var teacherModel = require("../models/teachers.js"); //db model
 /*
 	GET /
 */
+
+
 exports.index = function(req, res) {
 	
 	console.log("main page requested");
@@ -41,14 +43,6 @@ exports.index = function(req, res) {
 	});
 
 
-/*
-	GET teacher/
-*/
-
-	// 2) a string of properties to be return, 'name slug source' will return only the name, slug and source returned astronauts
-	// 3) callback function with (err, results)
-	//    err will include any error that occurred
-	//	  allTeachers is our resulting array of astronauts
 	teacherModel.find({}, 'name slug source', function(err, allTeachers){
 
 		if (err) {
@@ -72,42 +66,38 @@ exports.index = function(req, res) {
 */
 exports.detail = function(req, res) {
 
-	console.log("detail page requested for " + req.params.astro_id);
+	console.log("detail page requested for " + req.params.teacher_id);
 
 	//get the requested astronaut by the param on the url :astro_id
-	var astro_id = req.params.astro_id;
+	var teacher_id = req.params.teacher_id;
 
 	// query the database for astronaut
-	astronautModel.findOne({slug:astro_id}, function(err, currentAstronaut){
+	teacherModel.findOne({slug:teacher_id}, function(err, currentTeacher){
 
+		console.log(currentTeacher);
+		
 		if (err) {
 			return res.status(500).send("There was an error on the astronaut query");
 		}
 
-		if (currentAstronaut == null) {
+		if (currentTeacher == null) {
 			return res.status(404).render('404.html');
 		}
 
-		console.log("Found astro");
-		console.log(currentAstronaut.name);
+		// console.log("Found astro");
+		// console.log(currentAstronaut.name);
 
-		// formattedBirthdate function for currentAstronaut
-		currentAstronaut.formattedBirthdate = function() {
-			// formatting a JS date with moment
-			// http://momentjs.com/docs/#/displaying/format/
-            return moment(this.birthdate).format("dddd, MMMM Do YYYY");
-        };
 		
 		//query for all astronauts, return only name and slug
-		astronautModel.find({}, 'name slug', function(err, allAstros){
+		teacherModel.find({}, 'name slug', function(err, allTeachers){
 
-			console.log("retrieved all astronauts : " + allAstros.length);
+			console.log("retrieved all teachers : " + allTeachers.length);
 
 			//prepare template data for view
 			var templateData = {
-				astro : currentAstronaut,
-				astros : allAstros,
-				pageTitle : currentAstronaut.name
+				tchr : currentTeacher,
+				alltchr : allTeachers,
+				pageTitle : currentTeacher.name
 			}
 
 			// render and return the template
@@ -115,10 +105,11 @@ exports.detail = function(req, res) {
 
 
 		}) // end of .find (all) query
-		
+		//teacherModel.update({slug:teacher_id}, {$inc: {"meta.votes":1}})
 	}); // end of .findOne query
 
 }
+
 
 /*
 	GET /create
@@ -180,15 +171,20 @@ exports.createAstro = function(req, res) {
 		}
 
 	});
-
-	
-	
-
 }
-	
-	
 
+/*
+	GET /create
+*/
+exports.teacherForm = function(req, res){
+
+	var templateData = {
+		page_title : 'Are you an awesome teacher? Sign up to join our team!'
+	};
+
+	res.render('create_tr_form.html', templateData);
 }
+
 
 //POST teacher form
 exports.createTeacher = function(req, res) {
@@ -200,6 +196,11 @@ exports.createTeacher = function(req, res) {
 	var newTeacher = new teacherModel({
 		teachername : req.body.teachername,
 		subject : req.body.subject,
+		trphoto : req.body.trphoto,
+		source : {
+			name : req.body.source_teachername,
+			url : req.body.source_url
+		},
 		slug : req.body.teachername.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'_')
 
 	});
@@ -211,7 +212,7 @@ exports.createTeacher = function(req, res) {
 
 		} else {
 			console.log("Created a new teacher!");
-			console.log(newAstro);
+		
 			
 			// redirect to the astronaut's page
 			res.redirect('/teachers/'+ newTeacher.slug)
@@ -220,6 +221,7 @@ exports.createTeacher = function(req, res) {
 	});
 
 }
+
 
 exports.loadData = function(req, res) {
 
@@ -262,7 +264,6 @@ exports.loadData = function(req, res) {
 	return res.send("loaded astronauts");
 
 } // end of loadData function
-
 
 
 /*
@@ -331,4 +332,5 @@ var getAstronautById = function(slug) {
 	return false;
 }
 
+console.log ("it's working");
 

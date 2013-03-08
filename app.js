@@ -60,7 +60,7 @@ var routes = require('./routes/index.js');
 
 app.get('/', routes.index);
 
-app.get('/astronauts/:astro_id', routes.detail);
+//app.get('/astronauts/:astro_id', routes.detail);
 app.get('/teachers/:teacher_id', routes.detail);
 
 
@@ -68,6 +68,7 @@ app.get('/teachers/:teacher_id', routes.detail);
 app.get('/create',routes.astroForm); //display form
 app.post('/create',routes.createAstro); //form POST submits here
 app.get('/loadastros', routes.loadData); // load in astronauts array into db
+
 app.get('/createtrs',routes.teacherForm);
 app.post('/createtrs',routes.createTeacher)
 app.get('/loadtrs', routes.loadTrData); // load in teachers array into db
