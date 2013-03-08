@@ -7,10 +7,12 @@
 
 
 body { 
-	background-image:url("../img/main.png");
-	background-position:980px 600px; 
+	background-image:url("http://itp.nyu.edu/~shk479/su_itp_blog/wp-content/uploads/2013/03/online_tutoring_website2.png");
+	background-position:center;
+	background-size: contain;
 	background-repeat:no-repeat;
 	background-attachment:fixed;
+
 }
 
 

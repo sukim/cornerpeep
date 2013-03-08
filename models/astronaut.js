@@ -18,5 +18,6 @@ var AstronautSchema = new Schema({
     lastupdated : { type: Date, default: Date.now }
 });
 
+
 // export 'Astronaut' model
 module.exports = mongoose.model('Astronaut',AstronautSchema);

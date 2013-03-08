@@ -1,47 +1,60 @@
+
+
 <div class="row">
 
 	<div class="span6">
-
-		<h1>ExpressJS + Templates Demo</h1>
-		
-		<img src="http://i.imgur.com/ASfCs.gif" alt="Space shuttle animated gif crossing an LA highway">
 		
 		<hr>
+		
+
+		{{#students}}
+		
+		<li><a href="/students/{{slug}}">{{studentname}}</a> - {{suggesteddate}}</li>
+			
+		{{/students}}
+		
+		</hr>
+	
+	</div>
+
+</div>
+
+	<!--
+	<div class="control-group">
+	  <label class="control-label" for="inputIcon">Your e-mail address</label>
+  		<div class="controls">
+    		<div class="input-prepend">
+      			<span class="add-on"><i class="icon-envelope"></i></span>
+      			<input class="span2" id="inputIcon" type="text">
+    		</div>
+  		</div>
+	</div>
+	-->
+	<!-- right column -->
+
+	<div class="span6">
 
 		<h3>{{pageTitle}}</h3>
+		<h3>{{teacherListing}}</h3>
 
-		<!-- astronaut loop -->
-		{{#astros}}
+		<h3>Start a Session</h3>
 		
-		<li><a href="/astronauts/{{slug}}">{{name}}</a> - {{source.name}}</li>
-		
-		{{/astros}}
-
-		<hr>
-		<p>
-			<a href="/create">Create a new astronaut</a>
+		<p></p>
+		<li>Get your private tutoring here</li>
+		<p><a href="https://plus.google.com/hangouts/_?gid=APP_ID" style="text-decoration:none;">
+  				<img src="https://ssl.gstatic.com/s2/oz/images/stars/hangout/1/gplus-hangout-60x230-normal.png"
+			    alt="Start a Hangout"
+    			style="border:0;width:230px;height:60px;"/>
+			</a>
 		</p>
-	</div>
-
-
-
-
-
-
-	<!-- right column -->
-	<div class="span6">
-		<h3>The Demo</h3>
-		<li>
-			<a class="btn" href="https://github.com/johnschimmel/Heroku-ExpressJS-Boilerplate">Github Repo</a>
+		<p></p>
+		<p>
+			<a href="/create">Request a course</a>
+		</p>
+		
+		<p>
+			<a href="/createtrs">Are you the best tutor in the world?</a>
+		</p>
 		</li>
-		<br>
-	<b>Uses</b>
-		<li><a href="http://expressjs.com">ExpressJS</a> framework</li>
-		<li><a href="https://github.com/vol4ok/hogan-express">Hogan-Express</a> Template Engine</li>
-		<li>MongoLabs Heroku Addon</li>
-		<li>MongooseJS</li>
-		<li>Moment.js</li>
 	</div>
-
-
 </div>

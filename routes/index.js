@@ -7,6 +7,7 @@
 
 var moment = require("moment"); // date manipulation library
 var astronautModel = require("../models/astronaut.js"); //db model
+var teacherModel = require("../models/teachers.js"); //db model
 
 
 /*
@@ -33,7 +34,32 @@ exports.index = function(req, res) {
 
 		var templateData = {
 			astros : allAstros,
-			pageTitle : "NASA Astronauts (" + allAstros.length + ")"
+			pageTitle : "Our Current Students (" + allAstros.length + ")"
+		}
+
+		res.render('index.html', templateData);
+	});
+
+
+/*
+	GET teacher/
+*/
+
+	// 2) a string of properties to be return, 'name slug source' will return only the name, slug and source returned astronauts
+	// 3) callback function with (err, results)
+	//    err will include any error that occurred
+	//	  allTeachers is our resulting array of astronauts
+	teacherModel.find({}, 'name slug source', function(err, allTeachers){
+
+		if (err) {
+			res.send("Unable to query database for teachers").status(500);
+		};
+
+		console.log("retrieved " + allTeachers.length + " teachers from database");
+
+		var templateData = {
+			astros : allTeachers,
+			teacherListing : "Our Current Teachers (" + allTeachers.length + ")"
 		}
 
 		res.render('index.html', templateData);
@@ -100,7 +126,7 @@ exports.detail = function(req, res) {
 exports.astroForm = function(req, res){
 
 	var templateData = {
-		page_title : 'Enlist a new astronaut'
+		page_title : 'Enlist a new student'
 	};
 
 	res.render('create_form.html', templateData);
@@ -126,6 +152,9 @@ exports.createAstro = function(req, res) {
 
 	});
 
+
+
+
 	// you can also add properties with the . (dot) notation
 	newAstro.birthdate = moment(req.body.birthdate);
 	newAstro.skills = req.body.skills.split(",");
@@ -138,12 +167,12 @@ exports.createAstro = function(req, res) {
 	// save the newAstro to the database
 	newAstro.save(function(err){
 		if (err) {
-			console.error("Error on saving new astronaut");
+			console.error("Error on saving new student");
 			console.error("err");
-			return res.send("There was an error when creating a new astronaut");
+			return res.send("There was an error when creating a new student");
 
 		} else {
-			console.log("Created a new astronaut!");
+			console.log("Created a new student!");
 			console.log(newAstro);
 			
 			// redirect to the astronaut's page
@@ -154,6 +183,41 @@ exports.createAstro = function(req, res) {
 
 	
 	
+
+}
+	
+	
+
+}
+
+//POST teacher form
+exports.createTeacher = function(req, res) {
+	
+	console.log("received form submission");
+	console.log(req.body);
+
+	// accept form post data
+	var newTeacher = new teacherModel({
+		teachername : req.body.teachername,
+		subject : req.body.subject,
+		slug : req.body.teachername.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'_')
+
+	});
+	newTeacher.save(function(err){
+		if (err) {
+			console.error("Error on saving new teacher");
+			console.error("err");
+			return res.send("There was an error when creating a new teacher");
+
+		} else {
+			console.log("Created a new teacher!");
+			console.log(newAstro);
+			
+			// redirect to the astronaut's page
+			res.redirect('/teachers/'+ newTeacher.slug)
+		}
+
+	});
 
 }
 
