@@ -7,10 +7,7 @@ var StudentSchema = new Schema({
 	name : String,
 	homework : Boolean,	
     lastupdated : { type: Date, default: Date.now }
-    meta: {
-    votes: Number,
-    favs:  Number
-  }
+
 });
 
 
