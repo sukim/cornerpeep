@@ -2,36 +2,28 @@
 	
 	<!-- first column w/ image-->
 	<div class="span4">
-		<img src="{{tchr.photo}}" alt="photo of tr. {{tchr.name}}" class="img-polaroid" width="320px"><br>
-		
-		source: 
-		<a href="{{tchr.source.url}}" class="small">
-			{{tchr.source.name}}
-		</a>
+		<h2>{{tchr.teachername}}</h2>
 
 	</div>
 	
 	<!-- second column w/ details-->
 	<div class="span4">
-		<h2>{{tchr.name}}</h2>
-		<hr>
-
-		<div>
-			<br>Skills: {{tchr.skills}}<br>
-		</div>
-
+		<h2>Skills: {{tchr.subject}}</h2>
 	</div>
 
 	<!-- third column w/ listings -->
 	<div class="span2">
-		<h3>Teachers</h3>
+		<h3>Your Students</h3>
 		<hr>
-		{{#alltchr}}
+		{{#allstu}}
 		<li>
-			<a href="/teachers/{{slug}}">{{alltchr}}</a>
+			<a href="/students/{{slug}}">{{allstu}}</a>
 		</li>
-		{{/alltchr}}
+		{{/allstu}}
 
+		
+		<a href="/students">Rate your students</a>
+		
 		<br>
 		<a href="/createtrs">Add new teacher</a>
 	</div>

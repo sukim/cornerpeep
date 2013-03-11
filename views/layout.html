@@ -27,27 +27,10 @@
         <script type="text/javascript" src="http://cdn.dev.skype.com/uri/skype-uri.js"></script>
     </head>
     <body>
-        <div class="img">
-        <img src="http://upload.wikimedia.org/wikipedia/commons/0/08/Sine_curve_drawing_animation.gif" alt="Klematis" width="400" height="200">
         <!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
-        </div>
-        
         <div class="container">
 
             {{{yield}}}
-        
-            <li>Make a quick call for a quick question</li>
-            <div id = "genSkypeCall">
-                <script type = "text/javascript">
-                    Skype.ui({
-                        name:"call",
-                        element:"genSkypeCall",
-                        participants:["echo123"],
-                        listParticipants: "true"
-                    });
-                </script>
-            </div>
-
 
         </div> <!-- /container -->
 

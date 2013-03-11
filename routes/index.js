@@ -6,7 +6,7 @@
  */
 
 var moment = require("moment"); // date manipulation library
-var astronautModel = require("../models/astronaut.js"); //db model
+var studentModel = require("../models/student.js"); //db model
 var teacherModel = require("../models/teachers.js"); //db model
 
 
@@ -19,26 +19,27 @@ exports.index = function(req, res) {
 	
 	console.log("main page requested");
 
-	// query for all astronauts
+	// query for all students
 	// .find will accept 3 arguments
 	// 1) an object for filtering {} (empty here)
-	// 2) a string of properties to be return, 'name slug source' will return only the name, slug and source returned astronauts
+	// 2) a string of properties to be return, 'name slug source' will return only the name, slug and source returned students
 	// 3) callback function with (err, results)
 	//    err will include any error that occurred
-	//	  allAstros is our resulting array of astronauts
-	astronautModel.find({}, 'name slug source', function(err, allAstros){
+	//	  allStudents is our resulting array of students
+	studentModel.find({}, 'name slug source', function(err, allStudents){
 
 		if (err) {
-			res.send("Unable to query database for astronauts").status(500);
+			res.send("Unable to query database for students").status(500);
 		};
 
-		console.log("retrieved " + allAstros.length + " astronauts from database");
+		console.log("retrieved " + allStudents.length + " students from database");
 
 		var templateData = {
-			astros : allAstros,
-			pageTitle : "Our Current Students (" + allAstros.length + ")"
+			students : allStudents,
+			pageTitle : "Our Current Students (" + allStudents.length + ")"
 		}
 
+//	studentModel.findOne(filter, fields, callback);
 		res.render('index.html', templateData);
 	});
 
@@ -62,33 +63,30 @@ exports.index = function(req, res) {
 }
 
 /*
-	GET /astronauts/:astro_id
+	GET /teacher/:astro_id
 */
 exports.detail = function(req, res) {
 
 	console.log("detail page requested for " + req.params.teacher_id);
 
-	//get the requested astronaut by the param on the url :astro_id
+	//get the requested students by the param on the url :astro_id
 	var teacher_id = req.params.teacher_id;
 
-	// query the database for astronaut
+	// query the database for teachers
 	teacherModel.findOne({slug:teacher_id}, function(err, currentTeacher){
 
 		console.log(currentTeacher);
 		
 		if (err) {
-			return res.status(500).send("There was an error on the astronaut query");
+			return res.status(500).send("There was an error on the teacher query");
 		}
 
 		if (currentTeacher == null) {
 			return res.status(404).render('404.html');
 		}
 
-		// console.log("Found astro");
-		// console.log(currentAstronaut.name);
-
-		
-		//query for all astronauts, return only name and slug
+	//teacherModel.update({slug:teacher_id}, {$inc: {"meta.votes":1}})
+	//teacherModel.update({slug:teacher_id}, {$set: updatedData}, function(err, allTeachers));
 		teacherModel.find({}, 'name slug', function(err, allTeachers){
 
 			console.log("retrieved all teachers : " + allTeachers.length);
@@ -105,16 +103,62 @@ exports.detail = function(req, res) {
 
 
 		}) // end of .find (all) query
-		//teacherModel.update({slug:teacher_id}, {$inc: {"meta.votes":1}})
+		
 	}); // end of .findOne query
 
 }
 
 
+
+//get student
+exports.studetail = function(req, res) {
+
+	console.log("detail page requested for " + req.params.student_id);
+
+	//get the requested students by the param on the url :astro_id
+	var student_id = req.params.student_id;
+
+	// query the database for students
+	studentModel.findOne({slug:student_id}, function(err, currentStudent){
+
+		console.log(currentStudent);
+		
+		if (err) {
+			return res.status(500).send("There was an error on the student query");
+		}
+
+		if (currentStudent == null) {
+			return res.status(404).render('404.html');
+		}
+
+
+		studentModel.find({}, 'name slug', function(err, allStudents){
+
+			console.log("retrieved all teachers : " + allStudents.length);
+
+			//prepare template data for view
+			var templateData = {
+				stu : currentStudent,
+				allstu : allStudents,
+				pageTitle : currentStudent.name
+			}
+
+			// render and return the template
+			res.render('studetail.html', templateData);
+
+
+		}) // end of .find (all) query
+	
+	}); // end of .findOne query
+
+}
+
+
+
 /*
 	GET /create
 */
-exports.astroForm = function(req, res){
+exports.studentForm = function(req, res){
 
 	var templateData = {
 		page_title : 'Enlist a new student'
@@ -126,37 +170,20 @@ exports.astroForm = function(req, res){
 /*
 	POST /create
 */
-exports.createAstro = function(req, res) {
+exports.createStudent = function(req, res) {
 	
 	console.log("received form submission");
 	console.log(req.body);
 
 	// accept form post data
-	var newAstro = new astronautModel({
+	var newStudent = new studentModel({
 		name : req.body.name,
-		photo : req.body.photoUrl,
-		source : {
-			name : req.body.source_name,
-			url : req.body.source_url
-		},
 		slug : req.body.name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'_')
 
 	});
-
-
-
-
-	// you can also add properties with the . (dot) notation
-	newAstro.birthdate = moment(req.body.birthdate);
-	newAstro.skills = req.body.skills.split(",");
-
-	// walked on moon checkbox
-	if (req.body.walkedonmoon) {
-		newAstro.walkedOnMoon = true;
-	}
 	
-	// save the newAstro to the database
-	newAstro.save(function(err){
+	// save the newStudent to the database
+	newStudent.save(function(err){
 		if (err) {
 			console.error("Error on saving new student");
 			console.error("err");
@@ -164,10 +191,10 @@ exports.createAstro = function(req, res) {
 
 		} else {
 			console.log("Created a new student!");
-			console.log(newAstro);
-			
-			// redirect to the astronaut's page
-			res.redirect('/astronauts/'+ newAstro.slug)
+			console.log(newStudent);
+	
+			// redirect to the students's page
+			res.redirect('/students/'+ newStudent.slug)
 		}
 
 	});
@@ -212,9 +239,7 @@ exports.createTeacher = function(req, res) {
 
 		} else {
 			console.log("Created a new teacher!");
-		
-			
-			// redirect to the astronaut's page
+			// redirect to the students's page
 			res.redirect('/teachers/'+ newTeacher.slug)
 		}
 
@@ -225,107 +250,45 @@ exports.createTeacher = function(req, res) {
 
 exports.loadData = function(req, res) {
 
-	// load initial astronauts into the database
-	for(a in astronauts) {
+	// load initial students into the database
+	for(a in students) {
 
 		//get loop's current astronuat
-		currAstro = astronauts[a];
+		currStudent = students[a];
 
-		// prepare astronaut for database
-		tmpAstro = new astronautModel();
-		tmpAstro.slug = currAstro.slug;
-		tmpAstro.name = currAstro.name;
-		tmpAstro.missions = currAstro.missions;
-		tmpAstro.photo = currAstro.photo;
-		tmpAstro.source = currAstro.source;
-		tmpAstro.walkedOnMoon = currAstro.walkedOnMoon;
+		// prepare students for database
+		tmpStudent = new studentModel();
+		tmpStudent.slug = currStudent.slug;
+		tmpStudent.thenamebox = currStudent.thenamebox;
+		tmpStudent.homework = currStudent.homework;
 		
-		// convert currAstro's birthdate string into a native JS date with moment
-		// http://momentjs.com/docs/#/parsing/string/
-		tmpAstro.birthdate = moment(currAstro.birthdate); 
 
-		// convert currAstro's string of skills into an array of strings
-		tmpAstro.skills = currAstro.skills.split(",");
-
-		// save tmpAstro to database
-		tmpAstro.save(function(err){
+		// save tmpStudent to database
+		tmpStudent.save(function(err){
 			// if an error occurred on save.
 			if (err) {
 				console.error("error on save");
 				console.error(err);
 			} else {
-				console.log("Astronaut loaded/saved in database");
+				console.log("Student loaded/saved in database");
 			}
 		});
 
 	} //end of for-in loop
 
 	// respond to browser
-	return res.send("loaded astronauts");
+	return res.send("loaded students");
 
 } // end of loadData function
 
 
-/*
-	Astronaut Data
-*/ 
+var getStudentById = function(slug) {
+	for(a in students) {
+		var currentStudent = students[a];
 
-var astronauts = [];
-astronauts.push({
-	slug : 'john_glenn',
-	name : 'John Glenn',
-	birthdate : 'July 18, 1921',
-	missions : ['Mercury-Atlas 6','STS-95'],
-	photo : 'http://upload.wikimedia.org/wikipedia/commons/thumb/9/93/GPN-2000-001027.jpg/394px-GPN-2000-001027.jpg',
-	source : {
-		name : 'Wikipedia',
-		url : 'http://en.wikipedia.org/wiki/John_Glenn'
-	},
-	skills : 'Test pilot',
-	walkedOnMoon : false
-});
-
-astronauts.push({
-	slug : 'john_watt_young',
-	name : 'John Young',
-	birthdate : 'September 24, 1930',
-	missions : ['Gemini 3','Gemini 10','Apollo 10', 'Apollo 16','STS-1','STS-9'
-],
-	photo : 'http://upload.wikimedia.org/wikipedia/commons/e/ef/Astronaut_John_Young_gemini_3.jpg',
-	source : {
-		name : 'Wikipedia',
-		url : 'http://en.wikipedia.org/wiki/John_Young_(astronaut)'
-	},
-	skills : 'Test pilot',
-	walkedOnMoon : true
-});
-
-astronauts.push({
-	slug : 'sunita_williams',
-	name : 'Sunita Williams',
-	birthdate : 'September 19, 1965',
-	missions : ['STS-116', 'STS-117', 'Expedition 14', 'Expedition 15', 'Soyuz TMA-05M', 'Expedition 32'],
-	photo : 'http://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Sunita_Williams.jpg/480px-Sunita_Williams.jpg',
-	source : {
-		name : 'Wikipedia',
-		url : 'http://en.wikipedia.org/wiki/Sunita_Williams'
-	},
-	skills : 'Test pilot',
-	walkedOnMoon : false
-});
-
-
-// Look up an astronaut by id
-// accepts an 'id' parameter
-// loops through all astronauts, checks 'id' property
-// returns found astronaut or returns false is not found
-var getAstronautById = function(slug) {
-	for(a in astronauts) {
-		var currentAstro = astronauts[a];
-
-		// does current astronaut's id match requested id?
-		if (currentAstro.slug == slug) {
-			return currentAstro;
+		// does current students's id match requested id?
+		if (currentStudent.slug == slug) {
+			return currentStudent;
 		}
 	}
 

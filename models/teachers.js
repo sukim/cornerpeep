@@ -5,7 +5,9 @@ var teacherSchema = new Schema({
   slug : { type: String, lowercase: true, unique: true },
   teachername:  String,
   subject: String,
-  introduction:   String,
+  voicechat:   Boolean,
+  videochat:   Boolean,
+  fullservice:   Boolean,
   comments: [{ body: String, date: Date }],
   date: { type: Date, default: Date.now },
   hidden: Boolean,
@@ -13,11 +15,6 @@ var teacherSchema = new Schema({
     votes: Number,
     favs:  Number
   }
-  // trphoto : String,
-  // source : {
-  //   teachername : String,
-  //   url : String
-  // },
 
 });
 

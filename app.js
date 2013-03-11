@@ -60,14 +60,15 @@ var routes = require('./routes/index.js');
 
 app.get('/', routes.index);
 
-//app.get('/astronauts/:astro_id', routes.detail);
 app.get('/teachers/:teacher_id', routes.detail);
+app.get('/students/:student_id', routes.studetail);
+
+//new students routes
+app.get('/create',routes.studentForm); //display form
+app.post('/create',routes.createStudent); //form POST submits here
+app.get('/loadstudents', routes.loadData); // load in students array into db
 
 
-//new astronaut routes
-app.get('/create',routes.astroForm); //display form
-app.post('/create',routes.createAstro); //form POST submits here
-app.get('/loadastros', routes.loadData); // load in astronauts array into db
 
 app.get('/createtrs',routes.teacherForm);
 app.post('/createtrs',routes.createTeacher)

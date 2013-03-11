@@ -1,0 +1,25 @@
+
+<div class="row">
+
+	<!-- second column w/ details-->
+	<div class="span4">
+		<h2>{{stu.name}}</h2>
+		<hr>
+
+	</div>
+
+	<!-- third column w/ listings -->
+	<div class="span2">
+		<h3>Students</h3>
+		<hr>
+		{{#allstu}}
+		<li>
+			<a href="/students/{{slug}}">{{name}}</a>
+		</li>
+		{{/allstu}}
+
+		<br>
+		<a href="/create">Add new Student</a>
+	</div>
+
+</div>
