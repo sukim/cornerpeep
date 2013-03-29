@@ -5,7 +5,10 @@
 		<form method="POST" action="/createtrs">
 
 			<label for="teachername">
-				teachername <input type="text" name="teachername" id="teachername"> 
+				{{#errors.teachername}}
+				<span class="help-block alert alert-error">{{type}}</span>
+				{{/errors.teachername}}
+				teachername <input type="text" name="teachername" id="teachername"  value="{{teachername.name}}" required> 
 			</label>
 
 			<label for="subject">

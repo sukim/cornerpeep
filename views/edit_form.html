@@ -1,0 +1,36 @@
+<div class="row">
+	<div class="span8">
+		<h3>{{page_title}}</h3>
+
+		<form method="POST" action="/students/{{stu.slug}}/edit">
+
+			<label for="name">
+				Name <input type="text" name="name" id="name" value="{{stu.name}}" required> 
+			</label>
+
+			<label for="age">
+				Age <input type="text" name="age" id="age"> 
+			</label>
+			
+			<label for="email">
+				E-mail <input type="text" name="email" id="email"> 
+			</label>
+
+			<label for="trname">
+				Teacher's name <input type="text" name="trname" id="trname"> 
+			</label>
+
+			<label for="tremail">
+				Teacher's e-mail <input type="text" name="tremail" id="tremail"> 
+			</label>
+
+			<label for="homework">
+				Is this for your school homework? <input type="checkbox" name="homework" id="homework"> 
+			</label>
+
+
+			<input type="submit" value="Edit student">
+
+		</form>
+	</div>
+</div>

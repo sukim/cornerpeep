@@ -5,7 +5,10 @@
 	<div class="span4">
 		<h2>{{stu.name}}</h2>
 		<hr>
-
+		<p>{{stu.age}}</p>
+		<p>{{stu.email}}</p>
+		<p>{{stu.trname}}</p>
+		<p>{{stu.tremail}}</p>
 	</div>
 
 	<!-- third column w/ listings -->
@@ -17,6 +20,9 @@
 			<a href="/students/{{slug}}">{{name}}</a>
 		</li>
 		{{/allstu}}
+
+<br><br>
+		<a href="/students/{{stu.slug}}/edit" class="btn btn-info">edit</a>
 
 		<br>
 		<a href="/create">Add new Student</a>

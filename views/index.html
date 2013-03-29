@@ -1,53 +1,26 @@
 
 
+
+
 <div class="row">
+	<!--<div class="span1">Left side</div>-->
 
-	<div class="span6">
+	<div class="span9">
+
+		<h1>{{pageTitle}}</h1>
 		
-		<hr>
-		
 
-		{{#students}}
-		
-		<li><a href="/students/{{slug}}">{{studentname}}</a> - {{suggesteddate}}</li>
-			
-		{{/students}}
-		
-		</hr>
-	
-	</div>
-
-</div>
-
-	<!--
-	<div class="control-group">
-	  <label class="control-label" for="inputIcon">Your e-mail address</label>
-  		<div class="controls">
-    		<div class="input-prepend">
-      			<span class="add-on"><i class="icon-envelope"></i></span>
-      			<input class="span2" id="inputIcon" type="text">
-    		</div>
-  		</div>
-	</div>
-	-->
-	<!-- right column -->
-
-	<div class="span6">
-
-		<h3>{{pageTitle}}</h3>
-		<h3>{{teacherListing}}</h3>
-
-		<h3>Start a Session</h3>
-		
-		<p></p>
-		<p>
+		<h2>Start a Session</h2>
+		<p> </p>
+		<p> </p>
+		<h3>
 			<a href="/create">Sign up as a student</a>
-		</p>
+		</h3>
 		
-		<p>
-			<a href="/createtrs">Are you the best tutor in the world?</a>
-		</p>
-
+		<h3>
+			<a href="/createtrs">Sign up as a teacher</a>
+		</h3>
+		<p>{{teacherListing}}</p>
 		<li>Get your private tutoring here</li>
 
 		<p><a href="https://plus.google.com/hangouts/_?gid=APP_ID" style="text-decoration:none;">
@@ -73,4 +46,13 @@
 		
            
 	</div>
+
+    <div class="span2">
+		{{#students}}
+		
+		<li><a href="/students/{{slug}}">{{name}}</a></li>
+			
+		{{/students}}
+
+    </div>
 </div>

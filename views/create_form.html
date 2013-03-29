@@ -1,13 +1,63 @@
+<link rel="stylesheet" href="/css/popup.css">
 <div class="row">
-	<div class="span8">
+	<div class="span3">
+		
+		
+
+		<!-- Button to trigger modal -->
+		<a href="#myModal" role="button" class="btn" data-toggle="modal">Register</a>
+		 
+		<!-- Modal -->
+		<div id="myModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		  <div class="modal-header">
+		    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+		    <h3 id="myModalLabel">Register</h3>
+		  </div>
+		  <div class="modal-body">
+		    
+		  	<img src="http://itp.nyu.edu/~shk479/su_itp_blog/wp-content/uploads/2013/03/stu_signin_two-01.png" width="800" height="90">
+
+		  </div>
+		  <div class="modal-footer">
+		    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+		    <button class="btn btn-primary">Save changes</button>
+		  </div>
+		</div>
+
+
+	</div>
+	<div class="span9">
 		<h3>{{page_title}}</h3>
+
 
 		<form method="POST" action="/create">
 
+			{{#duplicateError}}
+			<b>That student is already registered.</b>
+			{{/duplicateError}}
+			
 			<label for="name">
-				Name <input type="text" name="name" id="name"> 
+				{{#errors.name}}
+					<span class="help-block alert alert-error">{{type}}</span>
+				{{/errors.name}}
+				Name <input type="text" name="name" id="name" value="{{stu.name}}" required> 
+			</label>
+			
+			<label for="age">
+				Age <input type="text" name="age" id="age"> 
+			</label>
+			
+			<label for="email">
+				E-mail <input type="text" name="email" id="email"> 
 			</label>
 
+			<label for="trname">
+				Teacher's name <input type="text" name="trname" id="trname"> 
+			</label>
+
+			<label for="tremail">
+				Teacher's e-mail <input type="text" name="tremail" id="tremail"> 
+			</label>
 
 			<label for="homework">
 				Is this for your school homework? <input type="checkbox" name="homework" id="homework"> 
@@ -18,6 +68,14 @@
 
 		</form>
 	</div>
+	<body>
+
+ 		<!-- <div class="popup">
+    		<img src="http://itp.nyu.edu/~shk479/su_itp_blog/wp-content/uploads/2013/03/stu_signin.png" width="800" height="90">
+		</div> -->
+	</div>
+
+    </body>    
 </div>
 
 

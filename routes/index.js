@@ -34,42 +34,37 @@ exports.index = function(req, res) {
 
 		console.log("retrieved " + allStudents.length + " students from database");
 
-		var templateData = {
-			students : allStudents,
-			pageTitle : "Our Current Students (" + allStudents.length + ")"
-		}
 
-//	studentModel.findOne(filter, fields, callback);
-		res.render('index.html', templateData);
+		// OK, found students, now find teachers
+
+		teacherModel.find({}, 'name slug source', function(err, allTeachers){
+
+			if (err) {
+				res.send("Unable to query database for teachers").status(500);
+			};
+
+			console.log("retrieved " + allTeachers.length + " teachers from database");
+
+			var templateData = {
+				students: allStudents,
+				astros : allTeachers,
+				teacherListing : "Our Current Teachers (" + allTeachers.length + ") Current Students (" + allStudents.length + ")"
+			}
+
+			res.render('index.html', templateData);
+		});
+
 	});
-
-
-	teacherModel.find({}, 'name slug source', function(err, allTeachers){
-
-		if (err) {
-			res.send("Unable to query database for teachers").status(500);
-		};
-
-		console.log("retrieved " + allTeachers.length + " teachers from database");
-
-		var templateData = {
-			astros : allTeachers,
-			teacherListing : "Our Current Teachers (" + allTeachers.length + ")"
-		}
-
-		res.render('index.html', templateData);
-	});
-
 }
 
 /*
-	GET /teacher/:astro_id
+	GET /teacher/:teacher_id
 */
 exports.detail = function(req, res) {
 
 	console.log("detail page requested for " + req.params.teacher_id);
 
-	//get the requested students by the param on the url :astro_id
+	//get the requested students by the param on the url :teacher_id
 	var teacher_id = req.params.teacher_id;
 
 	// query the database for teachers
@@ -115,7 +110,7 @@ exports.studetail = function(req, res) {
 
 	console.log("detail page requested for " + req.params.student_id);
 
-	//get the requested students by the param on the url :astro_id
+	//get the requested students by the param on the url :student_id
 	var student_id = req.params.student_id;
 
 	// query the database for students
@@ -142,6 +137,7 @@ exports.studetail = function(req, res) {
 				allstu : allStudents,
 				pageTitle : currentStudent.name
 			}
+			console.log(templateData);
 
 			// render and return the template
 			res.render('studetail.html', templateData);
@@ -170,34 +166,80 @@ exports.studentForm = function(req, res){
 /*
 	POST /create
 */
-exports.createStudent = function(req, res) {
-	
+exports.createStudent = function(req, res) {	
 	console.log("received form submission");
-	console.log(req.body);
+	console.log(req.name);
 
 	// accept form post data
 	var newStudent = new studentModel({
 		name : req.body.name,
-		slug : req.body.name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'_')
+		slug : req.body.name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'_'),
+		age : req.body.age,
+		email : req.body.email,
+		trname : req.body.trname,
+		tremail : req.body.tremail,
+		homework : req.body.homework,
 
 	});
 	
 	// save the newStudent to the database
 	newStudent.save(function(err){
 		if (err) {
+				
 			console.error("Error on saving new student");
-			console.error("err");
-			return res.send("There was an error when creating a new student");
+			console.error(err);
+
+			var isDuplicateError = (err.code == 11000); // duplicate mongo error 11000. will be true or false
+
+			var templateData = {
+				page_title : 'Enlist a new student',
+				errors : err.errors,
+				duplicateError : isDuplicateError,
+				student : req.body
+			};
+
+			res.render('create_form.html', templateData);
 
 		} else {
 			console.log("Created a new student!");
 			console.log(newStudent);
 	
-			// redirect to the students's page
+			// redirect to the students's page allstudents
 			res.redirect('/students/'+ newStudent.slug)
 		}
 
 	});
+};
+
+exports.editStudentForm = function(req, res) {
+
+	// Get student from URL params
+	var student_id = req.params.student_id;
+	var studentQuery = studentModel.findOne({slug:student_id});
+	studentQuery.exec(function(err, student){
+
+		if (err) {
+			console.error("ERROR");
+			console.error(err);
+			res.send("There was an error querying for "+ student_id).status(500);
+		}
+
+		if (student != null) {
+
+
+			// prepare template data
+			var templateData = {
+				stu : student
+			};
+
+			// render template
+			res.render('edit_form.html',templateData);
+		} else {
+			console.log("unable to find student: " + student_id);
+			return res.status(404).render('404.html');
+		}
+
+	})
 }
 
 /*
@@ -237,6 +279,18 @@ exports.createTeacher = function(req, res) {
 			console.error("err");
 			return res.send("There was an error when creating a new teacher");
 
+			// rebuild the templateData page
+			var templateData = {
+				page_title : 'Enlist a new teacher',
+				errors : err.errors, // include the error msg objects keys = fieldnames
+				teachername : req.body,  // include the user submitted fields
+		};
+ 
+		// redisplay the create form template
+		res.render('create_form.html', templateData);
+ 
+
+
 		} else {
 			console.log("Created a new teacher!");
 			// redirect to the students's page
@@ -247,40 +301,41 @@ exports.createTeacher = function(req, res) {
 
 }
 
+exports.updateStudent = function(req, res) {
 
-exports.loadData = function(req, res) {
+	// Get astronaut from URL params
+	var student_id = req.params.student_id;
 
-	// load initial students into the database
-	for(a in students) {
+	// prepare form data
+	var updatedData = {
+		name : req.body.name,
+		slug : req.body.name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'_'),
+		age : req.body.age,
+		email : req.body.email,
+		trname : req.body.trname,
+		tremail : req.body.tremail,
+		homework : req.body.homework,
+	}
+	// query for astronaut
+	studentModel.update({slug:student_id}, { $set: updatedData}, function(err, student){
 
-		//get loop's current astronuat
-		currStudent = students[a];
+		if (err) {
+			console.error("ERROR: While updating");
+			console.error(err);			
+		}
 
-		// prepare students for database
-		tmpStudent = new studentModel();
-		tmpStudent.slug = currStudent.slug;
-		tmpStudent.thenamebox = currStudent.thenamebox;
-		tmpStudent.homework = currStudent.homework;
-		
+		if (astronaut != null) {
+			res.redirect('/students/' + student_id);
 
-		// save tmpStudent to database
-		tmpStudent.save(function(err){
-			// if an error occurred on save.
-			if (err) {
-				console.error("error on save");
-				console.error(err);
-			} else {
-				console.log("Student loaded/saved in database");
-			}
-		});
+		} else {
 
-	} //end of for-in loop
+			// unable to find astronaut, return 404
+			console.error("unable to find student: " + student_id);
+			return res.status(404).render('404.html');
+		}
+	})
 
-	// respond to browser
-	return res.send("loaded students");
-
-} // end of loadData function
-
+}
 
 var getStudentById = function(slug) {
 	for(a in students) {
@@ -289,7 +344,9 @@ var getStudentById = function(slug) {
 		// does current students's id match requested id?
 		if (currentStudent.slug == slug) {
 			return currentStudent;
+			res.render('studetail.html', templateData);
 		}
+
 	}
 
 	return false;

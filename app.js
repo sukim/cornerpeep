@@ -60,14 +60,21 @@ var routes = require('./routes/index.js');
 
 app.get('/', routes.index);
 
-app.get('/teachers/:teacher_id', routes.detail);
-app.get('/students/:student_id', routes.studetail);
 
 //new students routes
 app.get('/create',routes.studentForm); //display form
 app.post('/create',routes.createStudent); //form POST submits here
-app.get('/loadstudents', routes.loadData); // load in students array into db
 
+
+// edit students
+app.get('/students/:student_id/edit', routes.editStudentForm); //GET display form
+app.post('/students/:student_id/edit', routes.updateStudent); //POST update database
+
+
+app.get('/teachers/:teacher_id', routes.detail);
+app.get('/students/:student_id', routes.studetail);
+
+app.get('/allstudents', routes.listing); // load in students array into db
 
 
 app.get('/createtrs',routes.teacherForm);
