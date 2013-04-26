@@ -8,6 +8,12 @@
         <meta name="viewport" content="width=device-width">
 
         <link rel="stylesheet" href="/css/bootstrap.min.css">
+        
+        <link rel="stylesheet" href="/css/style.css"> <!-- su and webrtc styles -->
+        
+        <script src="/js/webrtc.io.js"></script>
+
+
         <style>
             body {
                 padding-top: 180px;
@@ -24,9 +30,10 @@
         <link rel="stylesheet" href="/css/main.css">
 
         <script src="/js/vendor/modernizr-2.6.2-respond-1.1.0.min.js"></script>
-        <script type="text/javascript" src="http://cdn.dev.skype.com/uri/skype-uri.js"></script>
+
     </head>
-    <body>
+
+    <body onload="init()">
         <!-- This code is taken from http://twitter.github.com/bootstrap/examples/hero.html -->
         <div class="container">
 
@@ -40,5 +47,15 @@
         <script src="/js/vendor/bootstrap.min.js"></script>
 
         <script src="/js/main.js"></script>
-    </body>
+
+    <div id="videos">
+
+      <video id="you" class="flip" autoplay width="263" height="200" style="position: absolute; left: 0px; bottom: 0px;"></video>
+    </div>
+
+    
+    <script src="/js/script.js"></script>
+  </body>
+
+
 </html>

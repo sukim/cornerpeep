@@ -1,6 +1,5 @@
 div.popup{
-	position:center; top:10; width:300;
+	position:center; top:10; width:900;
     padding:5px;
     z-index:2;
-
 }

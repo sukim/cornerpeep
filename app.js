@@ -11,12 +11,19 @@ var mongoose = require('mongoose');
 // the ExpressJS App
 var app = express();
 
+
+var server = require('http').createServer(app);
+var webRTC = require('webrtc.io').listen(server);
+
+var port = process.env.PORT || 8080;
+server.listen(port);
 // configuration of port, templates (/views), static files (/public)
 // and other expressjs settings for the web server.
 app.configure(function(){
 
   // server port number
-  app.set('port', process.env.PORT || 5000);
+  //app.set('port', process.env.PORT || 5000);
+
 
   //  templates directory to 'views'
   app.set('views', __dirname + '/views');
@@ -42,19 +49,6 @@ app.configure('development', function(){
   app.use(express.errorHandler());
 });
 
-/* 
-SKIPPING FOR FUTURE CLASSES
-SESSIONS w/ MongoDB (store sessions across multiple dynos)
-COOKIEHASH in your .env file (also share with heroku) 
-*/
-// app.use(express.cookieParser(process.env.COOKIEHASH));
-// app.use(express.session({ 
-//     store: new mongoStore({url:process.env.MONGOLAB_URI, maxAge: 300000})
-//     , secret: process.env.COOKIEHASH
-//   })
-// );
-
-// ROUTES
 
 var routes = require('./routes/index.js');
 
@@ -66,25 +60,16 @@ app.get('/create',routes.studentForm); //display form
 app.post('/create',routes.createStudent); //form POST submits here
 
 
-// edit students
-app.get('/students/:student_id/edit', routes.editStudentForm); //GET display form
-app.post('/students/:student_id/edit', routes.updateStudent); //POST update database
-
-
-app.get('/teachers/:teacher_id', routes.detail);
-app.get('/students/:student_id', routes.studetail);
-
 app.get('/allstudents', routes.listing); // load in students array into db
 
 
-app.get('/createtrs',routes.teacherForm);
-app.post('/createtrs',routes.createTeacher)
-app.get('/loadtrs', routes.loadTrData); // load in teachers array into db
+// consume a remote API
+app.get('/remote_api_demo', routes.remote_api);
 
 // create NodeJS HTTP server using 'app'
-http.createServer(app).listen(app.get('port'), function(){
-  console.log("Express server listening on port " + app.get('port'));
-});
+// http.createServer(app).listen(app.get('port'), function(){
+//   console.log("Express server listening on port " + app.get('port'));
+// });
 
 
 

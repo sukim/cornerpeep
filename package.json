@@ -3,10 +3,15 @@
   "version": "0.0.1",
   
   "dependencies": {
+    "webrtc.io": "latest",
+    "webrtc.io-client": "latest",
+    "ws": "latest",
+
     "express": "3.0.0rc5",
     "hogan-express" : "0.3.3",
     "moment" : "1.7.2",
-    "mongoose" : "3.5.4"
+    "mongoose" : "3.5.6", 
+    "request" : "2.16.6"
   },
 
   "engines" : {

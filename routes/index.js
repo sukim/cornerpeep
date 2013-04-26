@@ -5,9 +5,19 @@
  * Routes contains the functions (callbacks) associated with request urls.
  */
 
+/*
+ * routes/index.js
+ * 
+ * Routes contains the functions (callbacks) associated with request urls.
+ */
+
+var request = require('request'); // library to make requests to remote urls
+
 var moment = require("moment"); // date manipulation library
 var studentModel = require("../models/student.js"); //db model
 var teacherModel = require("../models/teachers.js"); //db model
+
+
 
 
 /*
@@ -55,6 +65,57 @@ exports.index = function(req, res) {
 		});
 
 	});
+}
+
+exports.data_all = function(req, res) {
+
+	studentQuery = studentModel.find({}); // query for all astronauts
+	studentQuery.sort('name');
+	//YOU CAN CHOOSE WHAT KIND OF DATA YOU WANT TO SHOW
+	studentQuery.select('name');
+	studentQuery.exec(function(err, allStudents){
+		// prepare data for JSON
+		var jsonData = {
+			status : 'OK',
+			students : allStudents
+
+		}
+
+		res.json(jsonData);
+	});
+
+}
+
+exports.data_detail = function(req, res) {
+
+	console.log("detail page requested for " + req.params.astro_id);
+
+	//get the requested astronaut by the param on the url :astro_id
+	var student_id = req.params.student_id; 
+
+	// query the database for astronaut
+	var studentQuery = studentModel.findOne({slug:student_id});
+	studentQuery.exec(function(err, currentStudent){
+
+		if (err) {
+			return res.status(500).send("There was an error on the student query");
+		}
+
+		if (currentStudent == null) {
+			return res.status(404).render('404.html');
+		}
+
+		//prepare JSON data for response
+		var jsonData = {
+			student : currentStudent,
+			status : 'OK'
+		}
+
+		// return JSON to requestor
+		res.json(jsonData);
+
+	}); // end of .findOne query
+
 }
 
 /*
@@ -353,4 +414,40 @@ var getStudentById = function(slug) {
 }
 
 console.log ("it's working");
+
+
+exports.remote_api = function(req, res) {
+
+	var remote_api_url = 'http://itpdwdexpresstemplates.herokuapp.com/data/astronauts';
+	// var remote_api_url = 'http://localhost:5000/data/astronauts';
+
+	// make a request to remote_api_url
+	request.get(remote_api_url, function(error, response, data){
+
+		if (error){
+			res.send("There was an error requesting remote api url.");
+			return;
+		}
+
+		// convert data JSON string to native JS object
+		var apiData = JSON.parse(data);
+
+		// if apiData has property 'status == OK' then successful api request
+		if (apiData.status == 'OK') {
+
+			// prepare template data for remote_api_demo.html template
+			var templateData = {
+				//it is important to find a JavaScript object in someone's JSPON.
+				astronauts : apiData.astros,
+				rawJSON : data, 
+				remote_url : remote_api_url
+			}
+
+			return res.render('remote_api_demo.html', templateData);
+
+		}
+
+	})
+
+};
 
