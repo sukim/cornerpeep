@@ -1,0 +1,92 @@
+<html>
+  <head>
+    <title>Example webrtc.io</title>
+    <link type="text/css" href="style.css" rel="stylesheet"></link>
+
+
+
+    <script src="/webrtc.io.js"></script>
+    
+    <script type="text/javascript">
+
+
+      // When the page is fully loaded...
+      window.addEventListener("DOMContentLoaded", function () {
+
+        var video = document.getElementById('thevideo');
+
+        if (navigator.getUserMedia) {
+          navigator.getUserMedia({video: true}, function(stream) {
+              video.src = window.URL.createObjectURL(stream) || stream;
+              video.play();
+            }, onFailSoHard);
+        }
+
+        var canvas = document.getElementById('maincanvas');
+        var context = canvas.getContext('2d');
+        
+        var backcanvas = document.getElementById('backcanvas');
+        var backcontext = backcanvas.getContext('2d');
+        
+
+      function draw() {
+        // Draw the video on the back convas
+        backcontext.drawImage(video,0,0,video.width,video.height);
+        context.drawImage(video,0,0,video.width,video.height);
+        var bdata = backcontext.getImageData(0,0,video.width,video.height);
+      
+        for(var i = 0; i < bdata.data.length; i+=4) {
+          var r = bdata.data[i];
+          var g = bdata.data[i+1];
+          var b = bdata.data[i+2];
+          var brightness = (r+g+b)/3;
+          bdata.data[i] = b;
+          bdata.data[i+1] = g;
+          bdata.data[i+2] = r;
+        }
+      
+        // Draw the pixels onto the visible canvas
+        context.putImageData(bdata,0,0);
+        setTimeout(draw,20);
+      }
+      
+      function onFailSoHard(error) {
+        alert("FAIL " + error.code);
+      } 
+
+      draw();
+      }, false);
+
+  
+    </script>
+  </head>
+  <body onload="init()">
+    Video: <video id="thevideo" autoplay></video>
+      <br>
+      <!-- Out Canvas Element for output -->
+      <!--<canvas id="output"  height="426" width="515" ></canvas>-->
+      <div class="colours" style="display:none;">
+        <div id="red">
+          <input type="range" min=0 max=255 value=190 class="min">
+          <input type="range" min=0 max=255 value=240 class="max">
+        </div>
+        <div id="green">
+          <input type="range" min=0 max=255 value=0 class="min">
+          <input type="range" min=0 max=255 value=120 class="max">
+        </div>
+        <div id="blue">
+          <input type="range" min=0 max=255 value=90 class="min">
+          <input type="range" min=0 max=255 value=190 class="max">
+        </div>        
+      </div>
+
+    <script src="/script.js"></script>
+</body>
+<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script type="text/javascript" src="scripts/ccv.js"></script>
+<script type="text/javascript" src="scripts/face.js"></script>
+<script type="text/javascript" src="scripts/scripts.js"></script>
+<script type="text/javascript" src="scripts/stackblur.js"></script>
+
+</html>
+    
